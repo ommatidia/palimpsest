@@ -1,0 +1,7 @@
+Palimpsest Maps API
+
+Scripts:
+
+These are some scripts that I threw together to make the project easier to manage. If you want to set up your own mirror of this project you will likely want to make use of these. You will need a large amount of free disk space and a decent internet connection.
+
+I ended up setting up a VM on my server with 1T of space allocated, though only ended up using about 2/3 of that on imagery.
