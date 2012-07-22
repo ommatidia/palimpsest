@@ -1,6 +1,13 @@
 Palimpsest Maps API
 
+This is very much a work in progress. The goal is to host all of The Archimedes Palimpsest (archimedespalimpsest.net) imagery and make it accessible via the google maps interface. 
+
+The current stash of 4000+ images, all of which are between 50 and 250 MB, are rather difficult to work with in their currently hosted environment. The hope is that by making them accessible through a google maps interface, scholars of Math, Ancient Greek, and other pertinent fields who may not have the technical expertise or time will be able to peruse or even contribute to the body of scholarly work surrounding this manuscript. A secondary hope is that whatever tools end up being useful here could be used elsewhere for other projects that might benefit from increasing the accessibility of large (probably scientific) imagery data sets.
+
+
+
 Scripts:
+====
 
 These are some scripts that I threw together to make the project easier to manage. If you want to set up your own mirror of this project you will likely want to make use of these. You will need a large amount of free disk space and a decent internet connection.
 
