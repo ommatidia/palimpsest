@@ -16,14 +16,52 @@ the exponentially increasing number of tiles to fill a mathematically pure zoom.
 """
 
 
-import os, sys
+import os, sys, shutil
 import math
 
 #requires PIL
 import Image
 
+from functools import partial
+
 tileSize = (256, 256)
+imageName = "079r-074v_Alex03r_Sinar_LED365_01_PCA3.tif"
 imageSource = "/home/ommatidia/repos/palimpsest/imgs/"
+outputDir = "/home/ommatidia/repos/palimpsest/tiles/"
+
+def tileLevel(level, image, tileSize, outputDir):
+    zoomDir = os.path.join(outputDir, str(level))
+    
+    grid_width = 1 << level
+    
+    
+
+def tileImage(imagefile, tileSize, outputDir):
+    image = Image.open(imagefile)
+
+    index = imagefile.rfind('/') + 1
+    tileDir = os.path.join(outputDir, imagefile[index:index+8]) #will require more thought
+    try:
+        shutil.rmtree(tileDir)
+    except e:
+        print e
+
+    nativeZoomLevel = 8 #getNativeZoomLevel(image)
+    for level in range(0, nativeZoomLevel):
+        tileLevel(level, image, tileSize, tileDir)
+    
+    print imagefile
+    print tileSize
+    print tileDir
+
+
+def init(sourceDir, outputDir, tileSize):
+    #images = [sourceDir + x for x in os.listdir(sourceDir)]
+    images = [sourceDir + x for x in [imageName]]
+    myfn = partial(tileImage, tileSize=tileSize, outputDir=outputDir)
+    map(myfn, images)
+
+init(imageSource, outputDir, tileSize)
 
 def getNativeZoomLevel(image, tileSize):
     imageWidth = image.size[0]
@@ -72,9 +110,9 @@ def createTiles(filename):
 
 
 #TODO:args->tile(args)
-args = sys.argv[1:]
-filename= args[0]
+#args = sys.argv[1:]
+#filename= args[0]
 #level = 1 if len(args) < 2 else int(args[1])
 #tiles = pow(2, level)
 #tile(filename, tiles, tiles)
-createTiles(filename)
+#createTiles(filename)
