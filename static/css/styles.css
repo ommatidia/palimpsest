@@ -10,10 +10,14 @@ body {
     overflow: hidden;
 }
 
-.footer {
-    height: 125px;
-    background-color: #ffffff;
+.rpanel {
+    float: right;
+    width: 300px;
+    background-color: #00ff00;
+    /*overflow-x:*/
+    overflow-y: auto;
 }
+
 
 .title {
     color: #ffffff;
@@ -35,7 +39,6 @@ body {
 }
 
 .map {
-    width: 100%;
     background-color: #fff00;
     display: inline-block;
 }
