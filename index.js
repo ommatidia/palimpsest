@@ -4,6 +4,7 @@ $(window).ready(function() {
     resize();
     $(window).bind("resize", resize);
     imageType();
+
 });
 
 
@@ -96,7 +97,7 @@ function resize() {
     var body = $('body');
     var margins = body.outerHeight(true) - body.height();
     $('#gmaps_container').height(
-	window.innerHeight-$('.menubar').outerHeight(true)-margins
+	window.innerHeight-$('.menubar').outerHeight(true)-$('#ts2_container').outerHeight(true)-margins
     );
 }
 
