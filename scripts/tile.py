@@ -31,8 +31,39 @@ outputDir = "/home/ommatidia/repos/palimpsest/tiles/"
 
 def tileLevel(level, image, tileSize, outputDir):
     zoomDir = os.path.join(outputDir, str(level))
+    try:
+        os.mkdir(zoomDir)
+    except OSError, e:
+        print e
     
+        #BLARG... TODO ON PAPER
     grid_width = 1 << level
+    grid_size = (tileSize[0] * grid_width, tileSize[1]*grid_width)
+    newsize = 
+    offsets = ((image.size[0]-newsize[0])/2,(image.size[1]-newsize[1])/2)
+    canvas = Image.new('RGBA', grid_size)
+    canvas.paste(image, offsets)
+    
+    newimage = image.resize(newsize, Image.ANTIALIAS)
+    
+    bounding = [0,0,0,0]
+
+    x = 0
+    while x < newimage.size[0]:
+        bounding[0] = x
+        y = 0
+        bounding[2] = min(x + tileSize[0], newimage.size[0])
+        while y < newimage.size[1]:
+            bounding[1] = y
+            bounding[3] = min(y + tileSize[1], newimage.size[1])
+            
+            region = newimage.crop(bounding)
+            filename = "%s_%s.png" % (str(int(math.floor(x/tileSize[0]))), str(int(math.floor(y/tileSize[1]))))
+            region.save(os.path.join(zoomDir, filename), "PNG")
+
+            y += tileSize[1]
+        x += tileSize[0]
+        
     
     
 
@@ -40,28 +71,37 @@ def tileImage(imagefile, tileSize, outputDir):
     image = Image.open(imagefile)
 
     index = imagefile.rfind('/') + 1
-    tileDir = os.path.join(outputDir, imagefile[index:index+8]) #will require more thought
+    tileDir = os.path.join(outputDir, imagefile[index:index+9]) #will require more thought
+
     try:
         shutil.rmtree(tileDir)
-    except e:
+    except:
+        print "shutil.rmtree failed"
+
+    try:
+        os.mkdir(tileDir)
+    except OSError, e:
         print e
 
-    nativeZoomLevel = 8 #getNativeZoomLevel(image)
+    nativeZoomLevel = getNativeZoomLevel(image, tileSize)
     for level in range(0, nativeZoomLevel):
         tileLevel(level, image, tileSize, tileDir)
     
-    print imagefile
-    print tileSize
-    print tileDir
 
 
 def init(sourceDir, outputDir, tileSize):
+    try:
+        os.mkdir(outputDir)
+    except OSError, e:
+        print e
+
     #images = [sourceDir + x for x in os.listdir(sourceDir)]
     images = [sourceDir + x for x in [imageName]]
     myfn = partial(tileImage, tileSize=tileSize, outputDir=outputDir)
     map(myfn, images)
 
-init(imageSource, outputDir, tileSize)
+if __name__ == "__main__":
+    init(imageSource, outputDir, tileSize)
 
 def getNativeZoomLevel(image, tileSize):
     imageWidth = image.size[0]
@@ -76,7 +116,7 @@ def getNativeZoomLevel(image, tileSize):
     zoomH = math.log(horzTiles, 2)
     zoomV = math.log(vertTiles, 2)
 
-    return math.max(zoomH, zoomV)
+    return int(math.ceil(max(zoomH, zoomV)))
 
 
 
