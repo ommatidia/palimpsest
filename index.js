@@ -35,7 +35,6 @@ $(window).load(function() {
 
     var num = 1;
     for(key in pages) {
-	//if(num == 180) break; //TODO: REMOVE WHEN FINISHED!
         x = createThumbnailLink(key, num);
         $('.jTscroller').append(x);
         num++;
@@ -91,6 +90,8 @@ function registerListeners() {
     $('#npage').bind('click', function(evt) {
 	nextPage();
     });
+
+
 }
 
 function prevPage() {
@@ -186,8 +187,9 @@ function getImage(image) {
 function loadPage(page, view) {
     getImage(page + "/" + view);
     reloadTiles();
-    var evt = document.createEvent('Event');
-    evt.initEvent('reloaded', true, false);
+    var evt = document.createEvent("Event");
+    evt.initEvent("reloaded", true, true);
+    evt.test = "evt data";
     document.dispatchEvent(evt);
 }
 
@@ -240,20 +242,19 @@ function getNotificationDiv() {
 	});*/
 	this.div = document.createElement('div');
 	this.div.id = 'notify';
-	this.div.style.fontSize = '11px';
+	this.div.style.fontSize = '12px';
 	this.div.style.whiteSpace = 'nowrap';
 	this.div.style.align = 'center';
-	this.div.style.bgcolor = '#666666';
+	this.div.style.backgroundColor = '#666666';
 	this.div.style.color = '#ffffff';
+	this.div.style.padding = '1px 5px 1px 5px';
 	this.div.index = 0;
 	this.div.appendChild(document.createTextNode("Hello"));
 	
-	//var d = this.div;
-	document.addEventListener('reloaded', function(evt) {
+	document.addEventListener("reloaded", function(evt) {
 	    var page = currentPage()['page'];
-	    var view = currentPare()['view'];
-	    console.log('got your event!');
-	    $('#notify').text(pages[page][view]);
+	    var view = currentPage()['view'];
+	    $('#notify').text(" " + pages[page][view] + " ");
 	}, true);
     }
     return this.div;
@@ -265,12 +266,75 @@ function getMap(mapOptions, imageTypeOptions) {
 	this.map.mapTypes.set('palimpsest', new google.maps.ImageMapType(imageTypeOptions));
 	this.map.mapTypes.set('palimpsest2', new google.maps.ImageMapType(imageTypeOptions));
 	
-	//this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(getNotificationDiv());
-	//$('.menubar').append(getNotificationDiv());
+	this.map.controls[google.maps.ControlPosition.BOTTOM].push(getNotificationDiv());
 
 	this.reloadTiles(); //setMapId
+
+
+	google.maps.event.addListener(this.map, 'center_changed', function() {checkBounds();});
     }
    return this.map;
+}
+
+function getMapType() {
+    var map = getMap();
+    if(!map) return null;
+    
+    var currentMapType = map.mapTypes.get(map.getMapTypeId);
+    return currentMapType;
+}
+
+function getScreenBounds() {
+    //TODO: restrict image to stay on screen
+    var w = $('#gmaps_container').width();
+    var h = $('#gmaps_container').height();
+    var z = getMap().getZoom();
+    
+    var mapType = getMapType();
+    var tileSize = null;
+    if(mapType && $.isFunction(mapType.tileSize)) {
+	tileSize = mapType.tileSize();
+    } else {
+	tileSize = new google.maps.Size(128, 171);
+    }
+
+    return null;
+}
+
+function checkBounds() {
+    //TODO: restrict image to stay on screen
+    var center = getMap().getCenter();
+    var x = center.lng();
+    var y = center.lat();
+    console.log('x = ', x, ', y = ', y);
+    getScreenBounds();
+    /*var mapType = getMapType();
+    var tileSize = null;
+    if(mapType && $.isFunction(mapType.tileSize)) {
+	tileSize = mapType.tileSize();
+    } else {
+	tileSize = new google.maps.Size(128, 171);
+    }
+
+    var allowedBounds = new google.maps.LatLngBounds();
+    var center = getMap().getCenter();
+    if(!allowedBounds.contains(center)) {
+	
+	
+	
+
+
+	var maxx = allowedBounds.getNorthEast().lng();
+	var maxy = allowedBounds.getNorthEast().lat();
+	var minx = allowedBounds.getSouthWest().lng();
+	var miny = allowedBounds.getSouthWest().lat();
+	if(x < minx) x = minx;
+	else if(x > maxx) x = maxx;
+	if(y < miny) y = miny;
+	else if(y > maxy) y = maxy;
+	
+	getMap().setCenter(new google.maps.LatLng(y, x));
+    }*/
 }
 
 function getNormalizedCoord(coord, zoom) {
