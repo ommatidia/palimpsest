@@ -17,10 +17,10 @@
     <div id="menubar" class="menubar">
       <div class="title">The Archimedes Palimpsest</div>
       <div class="spacer">
-	<button id="ppage">Prev Page</button>
-	<button id="npage">Next Page</button>
-	<button id="prev">Prev Image</button>
-	<button id="next">Next Image</button>
+	<button id="ppage">Prev Folio</button>
+	<button id="npage">Next Folio</button>
+	<button id="prev">Prev Layer</button>
+	<button id="next">Next Layer</button>
       </div>
     </div>
     <div id="gmaps_container" class="map"></div>
