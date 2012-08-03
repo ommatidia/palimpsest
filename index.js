@@ -5,7 +5,7 @@ $(window).ready(function() {
     $(window).bind("resize", resize);
     imageType();
     
-    //TODO: remove this crap
+    //TODO: remove this cruft
     $('.rpanel').append(document.createTextNode("TODO: Line/Page numbered Greek Transcriptions"));
     for(var j = 0; j < 3; j++) {    
 	$('.rpanel').append(document.createElement("br"));
@@ -21,7 +21,7 @@ $(window).load(function() {
     function createThumbnailLink(pageId, pageNum) {
         img = $('<img/>', {
 	    'src': 'tiles/{id}/1/level_0/0_0.png'.replace(/{id}/g, pageId),
-	    'title': 'Page ' + pageNum,
+	    'title': pages[pageId]['1'],
 	    'alt': 'Page ' + pageNum
 	});
         
@@ -35,7 +35,7 @@ $(window).load(function() {
 
     var num = 1;
     for(key in pages) {
-	if(num == 55) break; //TODO: REMOVE WHEN FINISHED!
+	//if(num == 180) break; //TODO: REMOVE WHEN FINISHED!
         x = createThumbnailLink(key, num);
         $('.jTscroller').append(x);
         num++;
@@ -141,9 +141,11 @@ function resize() {
 	window.innerHeight-$('.menubar').outerHeight(true)-$('#ts2_container').outerHeight(true)-margins
     );
 
+    margins = body.outerWidth(true) - body.width();
+    $('.jThumbnailScroller').width(window.innerWidth-margins-10);
     $('.rpanel').height($('#gmaps_container').height());
 
-    margins = body.outerWidth(true) - body.width();
+
     $('#gmaps_container').width(
 	window.innerWidth-$('.rpanel').outerWidth(true)-margins-4
     );
@@ -184,6 +186,9 @@ function getImage(image) {
 function loadPage(page, view) {
     getImage(page + "/" + view);
     reloadTiles();
+    var evt = document.createEvent('Event');
+    evt.initEvent('reloaded', true, false);
+    document.dispatchEvent(evt);
 }
 
 
@@ -216,13 +221,42 @@ function imageType() {
     var mapOptions = {
 	center: myLatlng,
 	zoom: 1,
+	backgroundColor: '#000000',
+	//backgroundColor: '#aaaaaa',
 	streetViewControl: false,
 	mapTypeControlOptions: {
 	    mapTypeIds: ["palimpsest"]
 	}
     };
 
-    this.getMap(mapOptions, imageTypeOptions);
+    var map = this.getMap(mapOptions, imageTypeOptions);
+}
+
+function getNotificationDiv() {
+    if(!this.div) {
+/*	this.div = $('<div/>', {
+	    'id': 'notify',
+	    'style': 'font-size: 11px;'
+	});*/
+	this.div = document.createElement('div');
+	this.div.id = 'notify';
+	this.div.style.fontSize = '11px';
+	this.div.style.whiteSpace = 'nowrap';
+	this.div.style.align = 'center';
+	this.div.style.bgcolor = '#666666';
+	this.div.style.color = '#ffffff';
+	this.div.index = 0;
+	this.div.appendChild(document.createTextNode("Hello"));
+	
+	//var d = this.div;
+	document.addEventListener('reloaded', function(evt) {
+	    var page = currentPage()['page'];
+	    var view = currentPare()['view'];
+	    console.log('got your event!');
+	    $('#notify').text(pages[page][view]);
+	}, true);
+    }
+    return this.div;
 }
 
 function getMap(mapOptions, imageTypeOptions) {
@@ -230,6 +264,10 @@ function getMap(mapOptions, imageTypeOptions) {
 	this.map = new google.maps.Map(document.getElementById("gmaps_container"), mapOptions);
 	this.map.mapTypes.set('palimpsest', new google.maps.ImageMapType(imageTypeOptions));
 	this.map.mapTypes.set('palimpsest2', new google.maps.ImageMapType(imageTypeOptions));
+	
+	//this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(getNotificationDiv());
+	//$('.menubar').append(getNotificationDiv());
+
 	this.reloadTiles(); //setMapId
     }
    return this.map;
@@ -245,7 +283,8 @@ function getNormalizedCoord(coord, zoom) {
     }
 
     if (x < 0 || x >= tileRange) {
-	x = (x % tileRange + tileRange) % tileRange;
+	//x = (x % tileRange + tileRange) % tileRange;
+	return null;
     }
 
     return { 
