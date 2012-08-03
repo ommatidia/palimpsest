@@ -2,12 +2,12 @@
 
 .jThumbnailScroller {
     position:relative; 
-    width:100%; 
-    height:195px; 
-    margin:0px auto 0 auto; 
-    border:5px solid #eee; 
+    /*width:99.5%; /*TODO: js resize*/ 
+    height:193px; 
+    margin:0px 0 10px 0; 
+    border:5px solid #444444; 
     background:#bbb; 
-    padding:0; 
+    padding:0 0 0 0; 
     overflow: hidden; 
     -moz-border-radius:5px; 
     -webkit-border-radius:5px; 
@@ -21,11 +21,11 @@
 .jThumbnailScroller .jTscroller {
     position:relative; 
     height:100%; 
-    margin:0; 
+    margin: 0;
     left:0; 
     top:0; 
     display:inline-block;
-    /*display:inline;*/
+    *display:inline;
 }
 
 .jThumbnailScroller .jTscrollerNextButton,.jThumbnailScroller .jTscrollerPrevButton{
@@ -55,17 +55,21 @@
     background-color:#d56916; 
     opacity:1;
 }
-.jThumbnailScroller .jTscroller a{
+.jThumbnailScroller .jTscroller a, .jThumbnailScroller .jTscroller button{
     display:block; 
     float:left; 
-    border:5px solid #ddd; 
+    border:5px solid #555; 
     margin:6px 10px 6px 0; 
     background:#fff; 
     -moz-border-radius:3px; 
     -webkit-border-radius:3px; 
     border-radius:3px;
+    opacity: .9;
 }
-.jThumbnailScroller .jTscroller a:hover{border-color:#fff;}
+.jThumbnailScroller .jTscroller a:hover, jThumbnailScroller .jTscroller a:hover{
+    border-color:#333333;
+    opacity:1;
+}
 .jThumbnailScroller .jTscroller a:first-child{margin-left:10px;}
 .jThumbnailScroller .jTscroller a img{border:none;}
 /* different styled scrollers */
