@@ -28,14 +28,13 @@ function initializeThumbScroller() {
         anchor.append(img);
         return anchor;
     }
-    var scroller = $('.jTscroller');
-    
+
     var num = 1;
     for(key in pages) {
         x = createThumbnailLink(key, num++);
-	scroller.append(x);
+	$('.jTscroller').append(x);
     }
-    scroller.thumbnailScroller(getThumbScrollerOptions());
+    $('#ts2_container').thumbnailScroller(getThumbScrollerOptions());
 };
 
 function getThumbScrollerOptions() {
@@ -103,8 +102,6 @@ function registerListeners() {
     $('#npage').bind('click', function(evt) {
 	nextPage();
     });
-
-
 }
 
 function prevPage() {
@@ -144,7 +141,6 @@ function currentPage(page, view) {
 	'page': this.page,
 	'view': this.view
     };
-	
 }
 
 
@@ -315,7 +311,7 @@ function checkBounds() {
     var center = getMap().getCenter();
     var x = center.lng();
     var y = center.lat();
-    console.log('x = ', x, ', y = ', y);
+    //console.log('x = ', x, ', y = ', y);
     getScreenBounds();
     /*var mapType = getMapType();
     var tileSize = null;
