@@ -3,21 +3,17 @@ $(window).ready(function() {
     
     resize();
     $(window).bind("resize", resize);
-    imageType();
-    
-    //TODO: remove this cruft
-    $('.rpanel').append(document.createTextNode("TODO: Line/Page numbered Greek Transcriptions"));
-    for(var j = 0; j < 3; j++) {    
-	$('.rpanel').append(document.createElement("br"));
-    }
-    
-    for(var i = 0; i < 4; i++) {
-	$('.rpanel').append(document.createTextNode("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-    }
+    initializeGMaps();
 
+    initializeTranscription();
 });
 
 $(window).load(function() {
+    initializeThumbScroller();
+
+});
+
+function initializeThumbScroller() {
     function createThumbnailLink(pageId, pageNum) {
         img = $('<img/>', {
 	    'src': 'tiles/{id}/1/level_0/0_0.png'.replace(/{id}/g, pageId),
@@ -32,22 +28,39 @@ $(window).load(function() {
         anchor.append(img);
         return anchor;
     }
-
+    var scroller = $('.jTscroller');
+    
     var num = 1;
     for(key in pages) {
-        x = createThumbnailLink(key, num);
-        $('.jTscroller').append(x);
-        num++;
+        x = createThumbnailLink(key, num++);
+	scroller.append(x);
     }
+    scroller.thumbnailScroller(getThumbScrollerOptions());
+};
 
-    $('#ts2_container').thumbnailScroller({
-        noScrollCenterSpace: 400,
+function getThumbScrollerOptions() {
+    return {
+	noScrollCenterSpace: 400,
         scrollerType: 'clickButtons',
         acceleration: 2,
         scrollSpeed: 800
-    });
-});
+    };
+}
 
+
+function initializeTranscription() {
+    //TODO: remove this cruft
+    $('.rpanel').append(document.createTextNode("TODO: Line/Page numbered Greek Transcriptions"));
+    for(var j = 0; j < 3; j++) {    
+	$('.rpanel').append(document.createElement("br"));
+    }
+    
+    for(var i = 0; i < 4; i++) {
+	$('.rpanel').append(document.createTextNode("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
+    }
+
+
+}
 
 function registerListeners() {
     $('#prev').bind('click', function(evt) {
@@ -146,7 +159,7 @@ function resize() {
     $('.jThumbnailScroller').width(window.innerWidth-margins-10);
     $('.rpanel').height($('#gmaps_container').height());
 
-
+    
     $('#gmaps_container').width(
 	window.innerWidth-$('.rpanel').outerWidth(true)-margins-4
     );
@@ -154,24 +167,31 @@ function resize() {
     
 }
 
-function getMapTypeIds() {
-    return [
-	'palimpsest',
-	'palimpsest2'
-    ]
-}
-
 function reloadTiles() {
-    if(!this.current) {
-	this.current = 0;
-    }
-    this.current = (this.current + 1) % 2;
-    var id = getMapTypeIds()[this.current];
-    if(getMap().mapTypes.hasOwnProperty(id)) {
-	getMap().setMapTypeId(id);
-    }
+    /*
+     * Image should already be cached for the thumbnail scroller.
+     * 
+     */
+	
+    var mapTypeId = 'palimpsest';
+
+    getNotificationDiv(); //make sure the event listener is loaded;
+    
+    var img = new Image();
+    img.onload = function() {
+	var map = getMap();
+	map.mapTypes.set(mapTypeId, getImageMapType(this.width , this.height))
+	map.setMapTypeId(mapTypeId);	
+	fireReloaded();
+    };
+    img.src = "/palimpsest/tiles/" + getImage() + "/level_0/0_0.png";
 }
 
+function fireReloaded() {
+    var evt = document.createEvent("Event");
+    evt.initEvent("reloaded", true, true);
+    document.dispatchEvent(evt);
+}
 
 function getImage(image) {
     if(image) {
@@ -187,59 +207,47 @@ function getImage(image) {
 function loadPage(page, view) {
     getImage(page + "/" + view);
     reloadTiles();
-    var evt = document.createEvent("Event");
-    evt.initEvent("reloaded", true, true);
-    evt.test = "evt data";
-    document.dispatchEvent(evt);
 }
 
+function getImageMapType(tw, th) {
+    var options = typeOptions;
+    options['tileSize'] = new google.maps.Size(tw, th);
+    return new google.maps.ImageMapType(options);
+}
 
-function imageType() {
-    var imageTypeOptions = {
-	getTileUrl: function(coord, zoom) {
-	    var normalizedCoord = getNormalizedCoord(coord, zoom);
-	    if(!normalizedCoord) {
-		return null;
-	    }
+var typeOptions = {
+    getTileUrl: function(coord, zoom) {
+	var normalizedCoord = getNormalizedCoord(coord, zoom);
+	if(!normalizedCoord) {
+	    return null;
+	}
+	return "http://66.92.65.8:8080/palimpsest/tiles/" + getImage() + "/level_%{zoom}/%{x}_%{y}.png".replace(/%{zoom}/g, zoom).replace(/%{x}/g, normalizedCoord.x).replace(/%{y}/g, (normalizedCoord.y));
+    },
+    maxZoom: 5,
+    minZoom: 0,
+    radius: 10,
+    name: "Archimedes Palimpsest"
+};
 
-	    var bound = Math.pow(2, zoom);
-	    //var base = "http://66.92.65.8:8080/palimpsest/imgs/";
-	    //return base + "${zoom}/$
-	    //return "http://mw1.google.com/mw-planetary/lunar/lunarmaps_v1/clem_bw/" + zoom + "/" + normalizedCoord.x + "/" + (bound - normalizedCoord.y - 1) + ".jpg";
-	    
-	    return "http://66.92.65.8:8080/palimpsest/tiles/" + getImage() + "/level_%{zoom}/%{x}_%{y}.png".replace(/%{zoom}/g, zoom).replace(/%{x}/g, normalizedCoord.x).replace(/%{y}/g, (normalizedCoord.y));
-	},
-	tileSize: new google.maps.Size(128, 171),
-	maxZoom: 5,
-	minZoom: 0,
-	radius: 10,
-	name: "Archimedes Palimpsest"
-    };
-
-    //var moonMapType = new google.maps.ImageMapType(imageTypeOptions);
-    //var altMapType = new google.maps.ImageMapType(imageTypeOptions);
-
-    var myLatlng = new google.maps.LatLng(0,0);
+function getGMapsOptions() {
     var mapOptions = {
-	center: myLatlng,
+	center: new google.maps.LatLng(0, 0),
 	zoom: 1,
 	backgroundColor: '#000000',
-	//backgroundColor: '#aaaaaa',
 	streetViewControl: false,
 	mapTypeControlOptions: {
 	    mapTypeIds: ["palimpsest"]
 	}
     };
+    return mapOptions;
+}
 
-    var map = this.getMap(mapOptions, imageTypeOptions);
+function initializeGMaps() {
+    var map = this.getMap();
 }
 
 function getNotificationDiv() {
     if(!this.div) {
-/*	this.div = $('<div/>', {
-	    'id': 'notify',
-	    'style': 'font-size: 11px;'
-	});*/
 	this.div = document.createElement('div');
 	this.div.id = 'notify';
 	this.div.style.fontSize = '12px';
@@ -251,20 +259,21 @@ function getNotificationDiv() {
 	this.div.index = 0;
 	this.div.appendChild(document.createTextNode("Hello"));
 	
+	var div = this.div; //closure to update content immediately
 	document.addEventListener("reloaded", function(evt) {
 	    var page = currentPage()['page'];
 	    var view = currentPage()['view'];
-	    $('#notify').text(" " + pages[page][view] + " ");
+	    div.textContent = pages[page][view];
 	}, true);
     }
     return this.div;
 }
 
-function getMap(mapOptions, imageTypeOptions) {
+function getMap() {
     if(!this.map) {
-	this.map = new google.maps.Map(document.getElementById("gmaps_container"), mapOptions);
-	this.map.mapTypes.set('palimpsest', new google.maps.ImageMapType(imageTypeOptions));
-	this.map.mapTypes.set('palimpsest2', new google.maps.ImageMapType(imageTypeOptions));
+	var mapOptions = getGMapsOptions();
+	
+	this.map = new google.maps.Map($('#gmaps_container')[0], mapOptions);
 	
 	this.map.controls[google.maps.ControlPosition.BOTTOM].push(getNotificationDiv());
 
