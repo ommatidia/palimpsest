@@ -1,4 +1,9 @@
 $(window).ready(function() {
+    console.log("ready");
+});
+
+$(window).load(function() {
+    console.log("begin load");
     registerListeners();
     
     resize();
@@ -6,11 +11,10 @@ $(window).ready(function() {
     initializeGMaps();
 
     initializeTranscription();
-});
 
-$(window).load(function() {
     initializeThumbScroller();
-
+    resize();
+    console.log("end load");
 });
 
 function initializeThumbScroller() {
@@ -180,7 +184,20 @@ function reloadTiles() {
 	map.setMapTypeId(mapTypeId);	
 	fireReloaded();
     };
-    img.src = "/palimpsest/tiles/" + getImage() + "/level_0/0_0.png";
+    img.src = getTileUrl(0, 0, 0);
+}
+
+function getTileUrl(level, x, y) {
+    if(!HACKITY_HACKITY_HACK_MCHACK) {
+	var current = currentPage();
+	var image = current['page'];
+	var layer = current['view'];
+	var url = "/palimpsest/tiles/%{image}/%{layer}/level_%{level}/%{x}_%{y}.png";
+	url = url.replace(/%{image}/g, image).replace(/%{layer}/g, layer).replace(/%{level}/g, level);
+	return url.replace(/%{x}/g, x).replace(/%{y}/g, y);
+    } else {
+	return "/galen_tiles/level_%{level}/%{x}_%{y}.png".replace(/%{level}/g, level).replace(/%{x}/g, x).replace(/%{y}/g, y);
+    }
 }
 
 function fireReloaded() {
@@ -211,13 +228,22 @@ function getImageMapType(tw, th) {
     return new google.maps.ImageMapType(options);
 }
 
+var HACKITY_HACKITY_HACK_MCHACK = false;
 var typeOptions = {
     getTileUrl: function(coord, zoom) {
 	var normalizedCoord = getNormalizedCoord(coord, zoom);
 	if(!normalizedCoord) {
 	    return null;
 	}
-	return "http://66.92.65.8:8080/palimpsest/tiles/" + getImage() + "/level_%{zoom}/%{x}_%{y}.png".replace(/%{zoom}/g, zoom).replace(/%{x}/g, normalizedCoord.x).replace(/%{y}/g, (normalizedCoord.y));
+
+	return getTileUrl(zoom, normalizedCoord.x, normalizedCoord.y);
+	/*if(HACKITY_HACKITY_HACK_MCHACK == true) {
+	    return "/galen_tiles/level_%{zoom}/%{x}_%{y}.png".replace(/%{zoom}/g, zoom).replace(/%{x}/g, normalizedCoord.x).replace(/%{y}/g, (normalizedCoord.y));
+	} else if(HACKITY_HACKITY_HACK_MCHACK == false) {
+	    return "/palimpsest/tiles/" + getImage() + "/level_%{zoom}/%{x}_%{y}.png".replace(/%{zoom}/g, zoom).replace(/%{x}/g, normalizedCoord.x).replace(/%{y}/g, (normalizedCoord.y));
+	} else {
+	    return HACKITY_HACKITY_HACK_MCHACK;
+	}*/
     },
     maxZoom: 5,
     minZoom: 0,
