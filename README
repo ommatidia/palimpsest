@@ -7,8 +7,25 @@ The current stash of 4000+ images, all of which are between 50 and 250 MB, are r
 There are known issues with rendering in IE due to a lack of support of outerWidth & outerHeight method/properties that should be easy to fix, but is not a high priority.
 
 Scripts:
-====
+========
 
 These are some scripts that I threw together to make the project easier to manage. If you want to set up your own mirror of this project you will likely want to make use of these. You will need a large amount of free disk space and a decent internet connection.
 
 I ended up setting up a VM on my server with 1T of space allocated, though only ended up using about 2/3 of that on imagery.
+
+========
+
+The new recommended way to fetch and process assets is via rsync, and the updated scripts in the seperate imgtile project.
+
+REMOTES:
+rsync://archimedespalimpsest.net/archimedes
+rsync://digitalgalen.net/DigitalGalen
+rsync {REMOTE} {localpath=./} --recursive --verbose --progress (--update)
+
+or you can explore via:
+rsync rysnc://archimedespalimpsest.net 
+rsync rysnc://digitalgalen.net
+
+It may also be worthwhile to only rsync .tif files, (and eventually tei and linemapping files)
+
+Since the datasets here are relatively large (~300GB), you will most likely want to run these in a screen session.
