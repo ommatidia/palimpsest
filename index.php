@@ -6,9 +6,14 @@
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="static/js/jquery-ui-1.8.13.custom.min.js" type="text/javascript"></script>
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyB8wuSJdYBYyYXHH8x8wTHyS5vnX8Xtyvo&sensor=true" type="text/javascript"></script>
-    
     <script src="static/js/jquery.thumbnailScroller.js" type="text/javascript"></script>
+
+    <?php
+       $key = getenv('GMAPS_API_KEY');
+       printf("<script src='http://maps.googleapis.com/maps/api/js?key=%s&sensor=true' type='text/javascript'></script>", $key);
+    ?>
+
+
     <script src="pages.js" type="text/javascript"></script>
     <script src="index.js" type="text/javascript"></script>
   </head>
