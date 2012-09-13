@@ -9,12 +9,13 @@ if(!$.isFunction(Function.prototype.createDelegate)) {
 }
 
 //TODO: multiple css files palimpsest.css, styles.css
+//TODO: integrate ordering into init
 
 /**/
 var palimpsest = (function() {
 
     function defaultResize() {
-	
+	//DO NOTHING
     }
 
     /**/
@@ -34,7 +35,10 @@ var palimpsest = (function() {
 	    'path'     : 'tiles',
 	    'metadata' : {},
 	    'order'    : [],
-	    'resize'   : defaultResize
+	    'resize'   : defaultResize,
+	    'maxZoom'  : 4,
+	    'minZoom'  : 0,
+	    'title'    : "Palimpsest"
 	    
 	},
 	
@@ -58,10 +62,10 @@ var palimpsest = (function() {
 		var layer = current['view'];
 		return palimpsest.getTileUrl(image, layer, zoom, normalizedCoord.x, normalizedCoord.y);
 	    },
-	    maxZoom: 4,
-	    minZoom: 0,
+	    maxZoom: "SET IN INIT",
+	    minZoom: "SET IN INIT",
 	    radius: 10,
-	    name: "Galen Syriac Palimpsest"
+	    name: "SET IN INIT"
 	},
 	/**/
 	map: {
@@ -330,11 +334,20 @@ var palimpsest = (function() {
 	console.log("Initializing Library");
 
 	init_options = $.extend({}, options.init_options, init_options);
-
+	
+	function setMapOptionFn(option) {
+	    return function(param) {
+		options.maptype[option] = param;
+	    };
+	}
+	
 	var setif = [
 	    { term : 'host', apply : this.setHost, isSet: this.getHost()},
 	    { term : 'protocol', apply : this.setProtocol, isSet: this.getProtocol()},
-	    { term : 'path', apply : this.setPath, isSet: this.getPath()}
+	    { term : 'path', apply : this.setPath, isSet: this.getPath()},
+	    { term : 'maxZoom', isSet : false, apply : setMapOptionFn('maxZoom')},
+	    { term : 'minZoom', isSet : false, apply : setMapOptionFn('minZoom')},
+	    { term : 'title', isSet: false, apply: setMapOptionFn('title')}
 	];
 
 	$.each(setif, function(_, opt) {
@@ -342,6 +355,7 @@ var palimpsest = (function() {
 		opt['apply'].call(this, init_options[opt['term']]);
 	}.createDelegate(this));
 
+	//TODO: term, apply, isSet
 	this.setMapDivSel(init_options['mapDiv']);
 	this.setThumbDivSel(init_options['thumbDiv']);
 	this.setMetadata(init_options['metadata']);
@@ -371,7 +385,7 @@ var palimpsest = (function() {
 	    //register callbacks on each thumbnail
 	    //only fire thumbsLoaded Event when the last callback
 	    //has executed
-	    img[0].onload = function() {
+	    img[0].onload = img[0].onerror = function() {
 		if(pageNum == index) {
 		    var evt = document.createEvent("Event");
 		    evt.initEvent("thumbsLoaded", true, true);
@@ -445,10 +459,10 @@ var palimpsest = (function() {
 	}
 
 	if(!this.page) {
-	    this.page = "001r-004v";
+	    this.page = ordering[0];
 	}
 	if(!this.view) {
-	    this.view = "1";
+	    this.view = "0";
 	}
 
 	return {
