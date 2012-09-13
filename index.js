@@ -38,6 +38,7 @@ function syncLayers(page) {
 
 function registerListeners() {
     document.addEventListener("newFolio", function(evt) {
+	console.log("caught new folio ", evt.page);
 	syncLayers(evt.page);
     });
 
@@ -88,18 +89,28 @@ $(window).load(function() {
     //palimpsest.setThumbDivSel('#ts_container');
     
     var resize = function() {
+	console.log('resize');
+	
         var body    = $('body');
         var margins = body.outerHeight(true) - body.height();
-	var mapHeight  = window.innerHeight-$('.menubar').outerHeight(true)-palimpsest.thumbOuterHeight(true)-margins;
+	var mapHeight  = $(window).innerHeight()-$('.menubar').outerHeight(true)-palimpsest.thumbOuterHeight(true)-margins;
 	palimpsest.mapHeight(mapHeight);
-	$('.rpanel').height(window.innerHeight-$('.menubar').outerHeight(true)-margins-4);
+		  
+	$('.rpanel').height($(window).innerHeight()-$('.menubar').outerHeight(true)-margins-4);
 	
+	var isIE = /Explorer/.test(navigator.appName);
+	if(isIE) {
+	    $('.rpanel').css('position', 'relative');
+	    $('.rpanel').css('top', '-' + palimpsest.mapHeight() + "px");
+	}
+
         margins = body.outerWidth(true) - body.width();
-	palimpsest.thumbWidth(window.innerWidth-margins-14 - $('.rpanel').outerWidth(true));
+	console.log("margins ", margins);
+	palimpsest.thumbWidth($(window).innerWidth()-margins-14 - $('.rpanel').outerWidth(true));
 	
-	palimpsest.mapWidth(window.innerWidth-margins-4-$('.rpanel').outerWidth(true));
+	palimpsest.mapWidth($(window).innerWidth()-margins-4-$('.rpanel').outerWidth(true));
 
-
+	
     };
     //palimpsest.resize(resize);
     

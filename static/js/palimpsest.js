@@ -8,6 +8,52 @@ if(!$.isFunction(Function.prototype.createDelegate)) {
     };
 }
 
+if(!$.isFunction(Array.prototype.indexOf)) {
+    Array.prototype.indexOf = function(test) {
+	for(var i in this) {
+	    if(this[i] == test) {
+		return i;
+	    }
+	}
+	return -1;
+    }
+}
+
+if(!$.isFunction(document.addEventListener)) {
+    if(document.attachEvent) {
+	document.addEventListener = function(tag, fn, bubble) {
+	    document.attachEvent("ondataavailable", function(evt) {
+		if(evt.__event_name__ == tag) {
+		    fn(evt);
+		}
+	    });
+	}
+    } else {
+	console.log("FUCK!");
+    }
+}
+
+if(!$.isFunction(document.createEvent)) {
+    if(document.createEventObject) {
+	document.createEvent = function(name) {
+	    function simpleEvent(evttype){}
+	    simpleEvent.prototype.initEvent = function(evt, x, y) {
+		this.__event_name__ = evt;
+	    };
+	    return new simpleEvent();
+	};
+	document.dispatchEvent = function(evt) {
+	    var _event = document.createEventObject();
+	    for(var i in evt) {
+		_event[i] = evt[i];
+	    }
+	    document.fireEvent("ondataavailable", _event);
+	};
+    } else {
+	console.log("fuck create event");
+    }
+}
+
 //TODO: multiple css files palimpsest.css, styles.css
 //TODO: integrate ordering into init
 
@@ -96,15 +142,20 @@ var palimpsest = (function() {
 	this.thumbDivSel = selector;
 
 	$(selector).addClass('jThumbnailScroller');
-
-	var container = $('<div/>', {
+	var container = $('<div/>', {});
+	container.addClass('jTscrollerContainer');
+	var scroller = $('<div/>', {});
+	scroller.addClass('jTscroller');
+	container.append(scroller);
+	$(selector).append(container);
+	/*var container = $('<div/>', {
 	    class: ['jTscrollerContainer']
 	});
 	container.append($('<div/>', {
 	    class: ['jTscroller']
 	}));
 	
-	$(selector).append(container);
+	$(selector).append(container);*/
 	/*
 	$(selector).append($('<a/>', {
 	    href: '#',
@@ -301,6 +352,7 @@ var palimpsest = (function() {
 	    //$(this.div).text("TEST");
 	
 	    document.addEventListener("reloaded", function(evt) {
+		console.log("caught reloaded");
 		var current = this.currentPage(),
 		page = current['page'],
 		view = current['view'];
@@ -374,7 +426,7 @@ var palimpsest = (function() {
 
     /* this on needs some serious thought into abstracting*/
     Library.prototype.initThumbScroller = function() {
-	var index = null;
+	var own_index = null;
 	function createThumbnailLink(pageId, pageNum) {
             img = $('<img/>', {
 		'src': this.getTileUrl(pageId, 0, 0, 0, 0), 
@@ -386,7 +438,9 @@ var palimpsest = (function() {
 	    //only fire thumbsLoaded Event when the last callback
 	    //has executed
 	    img[0].onload = img[0].onerror = function() {
-		if(pageNum == index) {
+		console.log(pageNum, own_index);
+		if(pageNum == own_index) {
+		    console.log('dispatching event to init');
 		    var evt = document.createEvent("Event");
 		    evt.initEvent("thumbsLoaded", true, true);
 		    document.dispatchEvent(evt);
@@ -402,27 +456,36 @@ var palimpsest = (function() {
 	}
 
 	//add all thumbnails to scroller container
-	for(index in ordering) {
+	for(var index in ordering) {
 	    if(ordering.hasOwnProperty(index)) {
-		var image_key = ordering[index];
-		x = createThumbnailLink.call(this, image_key, index);
+		own_index = index;
+		var image_key = ordering[own_index];
+		x = createThumbnailLink.call(this, image_key, own_index);
 		$('.jTscroller').append(x);
 	    }
 	}
+	console.log("added all image tags");
 
 	//don't initialize our scroller until all images are loaded
 	//this could fail if the last thumbnail is invalid or 404s!
 	document.addEventListener("thumbsLoaded", function() {
-	    $(this.getThumbDivSel()).append($('<a/>', {
+	    console.log("caught thumbnails loaded");
+	    /*$(this.getThumbDivSel()).append($('<a/>', {
 		href: '#',
 		class: ['jTscrollerPrevButton']
 	    }));
 	    $(this.getThumbDivSel()).append($('<a/>', {
 		href: '#',
 		class: ['jTscrollerNextButton']
-	    }));
-
-	    $(this.getThumbDivSel()).thumbnailScroller(options.thumbscroller);
+	    }));*/
+	    var thumb = $(this.getThumbDivSel());
+	    var prev = $('<a/>', {href: '#'});
+	    prev.addClass('jTscrollerPrevButton');
+	    var next = $('<a/>', {href: '#'});
+	    next.addClass('jTscrollerNextButton');
+	    thumb.append(prev);
+	    thumb.append(next);
+	    thumb.thumbnailScroller(options.thumbscroller);
 	}.createDelegate(this));
     };
 
