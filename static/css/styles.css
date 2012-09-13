@@ -9,23 +9,10 @@ button {
     border-radius: 3px;
 }
 
-body {
-    background-color: #aaaaaa;
-    overflow: hidden;
-}
-
 .collapse_icon {
     width: 20px;
     height: 20px;
     margin: 7px 0px 0px 7px;
-    
-}
-
-.mapsnotify {
-    font-size: 12px;
-    background-color: #666666;
-    color: #ffffff;
-    padding: 1px 5px 1px 5px;
     
 }
 
@@ -56,14 +43,6 @@ body {
     margin: 45px 7px 7px -8px;
 }
 
-.title {
-    color: #ffffff;
-    float: left;
-    padding-left: 8px;
-    font-size: 26px;
-    margin-top: 7px;
-}
-
 .spacer {
     color: #ffffff;
     float: right;
@@ -74,20 +53,3 @@ body {
     margin: 10px 6px 5px 0;
 }
 
-.menubar {
-    background-color: #444444;
-    height: 40px;
-    margin-bottom: 8px;
-    width: 100%;
-    float: left;
-
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-}
-
-.map {
-    background-color: #fff00;
-    display: inline-block;
-    margin: 0;
-}

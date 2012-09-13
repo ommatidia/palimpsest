@@ -1,0 +1,38 @@
+body {
+    background-color: #aaaaaa;
+    overflow: hidden;
+}
+
+.mapsnotify {
+    font-size: 12px;
+    background-color: #666666;
+    color: #ffffff;
+    padding: 1px 5px 1px 5px;
+    
+}
+
+.title {
+    color: #ffffff;
+    float: left;
+    padding-left: 8px;
+    font-size: 26px;
+    margin-top: 7px;
+}
+
+.menubar {
+    background-color: #444444;
+    height: 40px;
+    margin-bottom: 8px;
+    width: 100%;
+    float: left;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.map {
+    background-color: #fff00;
+    display: inline-block;
+    margin: 0;
+}

@@ -2,6 +2,7 @@
   <head>
     
     <link rel="stylesheet" href="static/css/jquery.thumbnailScroller.css"></link>
+    <link rel="stylesheet" href="static/css/palimpsest.css"></link>
     <link rel="stylesheet" href="static/css/styles.css"></link>
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
