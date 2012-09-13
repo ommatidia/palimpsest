@@ -347,7 +347,7 @@ var palimpsest = (function() {
 	    { term : 'path', apply : this.setPath, isSet: this.getPath()},
 	    { term : 'maxZoom', isSet : false, apply : setMapOptionFn('maxZoom')},
 	    { term : 'minZoom', isSet : false, apply : setMapOptionFn('minZoom')},
-	    { term : 'title', isSet: false, apply: setMapOptionFn('title')}
+	    { term : 'title', isSet: false, apply: setMapOptionFn('name')}
 	];
 
 	$.each(setif, function(_, opt) {
