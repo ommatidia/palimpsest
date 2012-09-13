@@ -4,40 +4,57 @@
     <link rel="stylesheet" href="static/css/jquery.thumbnailScroller.css"></link>
     <link rel="stylesheet" href="static/css/styles.css"></link>
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="static/js/jquery-ui-1.8.13.custom.min.js" type="text/javascript"></script>
-    <script src="static/js/jquery.thumbnailScroller.js" type="text/javascript"></script>
-
     <?php
        $key = getenv('GMAPS_API_KEY');
-       printf("<script src='http://maps.googleapis.com/maps/api/js?key=%s&sensor=true' type='text/javascript'></script>", $key);
+       printf('<script src="http://maps.googleapis.com/maps/api/js?key=%s&sensor=true" type="text/javascript"></script>', $key);
     ?>
-
-    <script src="pages.js" type="text/javascript"></script>
+    <script src="static/js/jquery.thumbnailScroller.js" type="text/javascript"></script>
+    <script src="static/js/palimpsest.js" type="text/javascript"></script>
+    <script src="tiles/metadata.json" type="text/javascript"></script>
+    <script src="tiles/ordering.json" type="text/javascript"></script>
     <script src="index.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      <?php 
+	 printf("setup('%s', '%s', '%s');", getenv('IMAGERY_PROTOCOL'), getenv('IMAGERY_HOST'), getenv('IMAGERY_PATH'));
+      ?>
+    </script>
   </head>
   
   <body>
     <div id="menubar" class="menubar">
-      <div class="title">The Archimedes Palimpsest</div>
+      <div class="title">The Galen Palimpsest</div>
+      
       <div class="spacer">
-	<button id="ppage">Prev Folio</button>
-	<button id="npage">Next Folio</button>
-	<button id="prev">Prev Layer</button>
-	<button id="next">Next Layer</button>
+	<label>Layer: </label>
+	<select class="layer"></select>
       </div>
+      
     </div>
-
     <div id="gmaps_container" class="map"></div>
-    <div class="rpanel"></div>
-    
-    <div id="ts2_container" class="jThumbnailScroller">
-      <div class="jTscrollerContainer">
-	<div class="jTscroller"></div>
+    <div class="rpanel">
+      <div class="header">
+	<div class="collapse_action" style="float: left;">
+	  <img src="static/bca-r.png" class="collapse_icon"/>
+	</div>
+	<div class="instructions" style="float: right;">
+	  Features
+	</div>
       </div>
-      <a href="#" class="jTscrollerPrevButton"></a>
-      <a href="#" class="jTscrollerNextButton"></a>
+      <div class="content">
+	<ul>
+	  <li>
+	    You can bookmark particular images via Shift+Number
+	  </li>
+	  <li>
+	    You can recall any previously saved bookmark via Number
+	  </li>
+	</ul>
+      </div>
     </div>
-  </body>
 
+    <div id="ts_container"></div>
+    
+  </body>
 </html>

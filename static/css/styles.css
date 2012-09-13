@@ -14,6 +14,21 @@ body {
     overflow: hidden;
 }
 
+.collapse_icon {
+    width: 20px;
+    height: 20px;
+    margin: 7px 0px 0px 7px;
+    
+}
+
+.mapsnotify {
+    font-size: 12px;
+    background-color: #666666;
+    color: #ffffff;
+    padding: 1px 5px 1px 5px;
+    
+}
+
 .rpanel {
     float: right;
     width: 300px;
@@ -25,6 +40,21 @@ body {
     margin-bottom: 8px;
 }
 
+.collapsed {
+    width: 35px;
+    /*border: 0px;*/
+    overflow-y: none;
+    overflow-x: none;
+}
+
+.instructions {
+    margin: 7px 105px 5px 0;
+    font-size: 20px;
+}
+
+.content {
+    margin: 45px 7px 7px -8px;
+}
 
 .title {
     color: #ffffff;
@@ -35,7 +65,13 @@ body {
 }
 
 .spacer {
+    color: #ffffff;
     float: right;
+}
+
+.layer {
+    width: 200px;
+    margin: 10px 6px 5px 0;
 }
 
 .menubar {
