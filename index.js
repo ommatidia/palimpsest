@@ -5,12 +5,8 @@
 /**************************************
  * import environment variable config *
  **************************************/
-var initOptions = {};
 function setup(protocol, host, path) {
-    //palimpsest.setProtocol(protocol).setHost(host).setPath(path);
-    initOptions['protocol'] = protocol;
-    initOptions['host'] = host;
-    initOptions['path'] = path;
+    palimpsest.setProtocol(protocol).setHost(host).setPath(path);
 }
 
 function collapse() {
@@ -109,12 +105,15 @@ $(window).load(function() {
     
 
  
-    palimpsest.init($.extend({}, initOptions, {
+    palimpsest.init({
 	'mapDiv' : '#gmaps_container',
 	'thumbDiv' : '#ts_container',
 	'metadata' : metadata,
-	'resize'   : resize
-    }));
+	'resize'   : resize,
+	'title'  : 'Archimedes Palimpsest',
+	'maxZoom' : 5,
+	'minZoom' : 0
+    });
 
     registerListeners();
     syncLayers(palimpsest.currentPage()['page']);
