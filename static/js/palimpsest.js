@@ -356,7 +356,7 @@ var palimpsest = (function() {
 		var current = this.currentPage(),
 		page = current['page'],
 		view = current['view'];
-		this.div.textContent = this.meta[page][view]['imagename'];
+		$(this.div).text(this.meta[page][view]['imagename']);
 	    }.createDelegate(this), true);
 	}
 	return this.div;
