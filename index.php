@@ -25,7 +25,7 @@
   
   <body>
     <div id="menubar" class="menubar">
-      <div class="title">The Archimedes Palimpsest</div>
+      <div class="title">The Galen Palimpsest</div>
       
       <div class="spacer">
 	<label>Layer: </label>

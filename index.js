@@ -95,7 +95,6 @@ $(window).load(function() {
         var margins = body.outerHeight(true) - body.height();
 	var mapHeight  = $(window).innerHeight()-$('.menubar').outerHeight(true)-palimpsest.thumbOuterHeight(true)-margins;
 	palimpsest.mapHeight(mapHeight);
-		  
 	$('.rpanel').height($(window).innerHeight()-$('.menubar').outerHeight(true)-margins-4);
 	
 	var isIE = /Explorer/.test(navigator.appName);
@@ -105,7 +104,6 @@ $(window).load(function() {
 	}
 
         margins = body.outerWidth(true) - body.width();
-	console.log("margins ", margins);
 	palimpsest.thumbWidth($(window).innerWidth()-margins-14 - $('.rpanel').outerWidth(true));
 	
 	palimpsest.mapWidth($(window).innerWidth()-margins-4-$('.rpanel').outerWidth(true));
@@ -121,8 +119,8 @@ $(window).load(function() {
 	'thumbDiv' : '#ts_container',
 	'metadata' : metadata,
 	'resize'   : resize,
-	'title'  : 'Archimedes Palimpsest',
-	'maxZoom' : 5,
+	'title'  : 'Galen Syriac Palimpsest',
+	'maxZoom' : 4,
 	'minZoom' : 0
     });
 
