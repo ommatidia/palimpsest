@@ -413,11 +413,13 @@ var palimpsest = (function() {
 	this.setMetadata(init_options['metadata']);
 	//TODO: set order
 
-	//enforce all data collected/full initialization somehow
-	this.getMap(); //init
+	var map = this.getMap(); //init
 	
 	if(this.getThumbDivSel()) {
-	    this.initThumbScroller();
+	    //load thumbnail scroller icons after map has loaded
+	    google.maps.event.addListenerOnce(map, 'idle', function() {
+		this.initThumbScroller();
+	    }.createDelegate(this));
 	}
 	
 	this.resize(init_options['resize']);
